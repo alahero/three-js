@@ -73,6 +73,7 @@ loader.load(
     if (embeddedCamera) {
       usesEmbeddedCamera = true;
       activeCamera = embeddedCamera;
+      syncCameraAspect();
     } else {
       centerModel(roulette);
     }
@@ -112,11 +113,17 @@ window.addEventListener('resize', () => {
   const height = window.innerHeight;
 
   renderer.setSize(width, height);
-  if (!usesEmbeddedCamera) {
-    activeCamera.aspect = width / height;
-    activeCamera.updateProjectionMatrix();
-  }
+  syncCameraAspect();
 });
+
+function syncCameraAspect() {
+  if (!activeCamera.isPerspectiveCamera) {
+    return;
+  }
+
+  activeCamera.aspect = window.innerWidth / window.innerHeight;
+  activeCamera.updateProjectionMatrix();
+}
 
 function centerModel(model) {
   const box = new THREE.Box3().setFromObject(model);
